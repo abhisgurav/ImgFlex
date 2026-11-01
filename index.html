@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ImgFlex | Secure, Client-Side Image Tools</title>
+    <meta name="description" content="Premium, offline-first image converter and resizer. Fast, secure, and runs entirely in your browser.">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/css/style.css">
+
+    <script src="js/imagetracer.js"></script>
+
+</head>
+<body>
+    <div class="background-effects">
+        <div class="glow-orb orb-1"></div>
+        <div class="glow-orb orb-2"></div>
+    </div>
+
+    <nav class="glass-nav">
+        <div class="nav-content">
+            <div class="logo">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><circle cx="8.5" cy="8.5" r="1.5"></circle><polyline points="21 15 16 10 5 21"></polyline></svg>
+                ImgFlex
+            </div>
+            <button class="menu-btn" id="menu-btn" aria-label="Menu">
+                ☰
+            </button>
+            <div class="nav-links" id="nav-links">
+                <a href="#" data-route="home" class="active">Home</a>
+                <a href="#" data-route="converter">Converter</a>
+                <a href="#" data-route="resizer">Resizer</a>
+                <a href="#" data-route="edit">Editor</a>
+                <button id="theme-toggle" title="Toggle Theme">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="19.36" x2="19.78" y2="20.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="4.22" x2="19.78" y2="5.64"></line></svg>
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <main id="app-root">
+        <section id="view-home" class="view active fade-in">
+            <div class="hero">
+                <div class="badge">100% Secure & Client-Side</div>
+                <h1 class="gradient-text">Professional Image Tools,<br>Reimagined.</h1>
+                <p class="subtitle">Convert, resize, and edit your images instantly. No servers. No tracking. Uncompromising quality directly in your browser.</p>
+                <div class="hero-cta">
+                    <button class="btn btn-primary" onclick="window.navigate('converter')">Launch Converter</button>
+                    <button class="btn btn-secondary" onclick="window.navigate('resizer')">Launch Resizer</button>
+                    <button class="btn btn-secondary" onclick="window.navigate('edit')">Launch Editor</button>
+                </div>
+            </div>
+            <div class="features-grid">
+                <div class="glass-card feature-card">
+                    <h3>⚡ Lightning Fast</h3>
+                    <p>Powered by native Web APIs, processing happens instantly in your RAM.</p>
+                </div>
+                <div class="glass-card feature-card">
+                    <h3>🔒 Zero Server Uploads</h3>
+                    <p>Your files never leave your device. Complete privacy guaranteed.</p>
+                </div>
+                <div class="glass-card feature-card">
+                    <h3>🎨 Lossless Quality</h3>
+                    <p>Advanced canvas rendering ensures perfectly crisp output every time.</p>
+                </div>
+            </div>
+        </section>
+
+        <section id="view-converter" class="view">
+            <div class="tool-header">
+                <h2>Format Converter</h2>
+                <p>Convert images between PNG, JPG, WEBP, and more.</p>
+            </div>
+            <div class="glass-card tool-container">
+                <div class="drop-zone" id="converter-drop">
+                    <input type="file" id="converter-input" accept="image/png, image/jpeg, image/webp, image/bmp, image/gif, image/svg+xml" multiple hidden>
+                    <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg>
+                    <p>Drag & Drop images here or <span class="highlight">Browse</span></p>
+                    <small>Supports JPG, PNG, WEBP, SVG, BMP (Batch supported)</small>
+                </div>
+                
+                <div class="controls hidden" id="converter-controls">
+                    <div class="preview-area">
+                        <img id="converter-preview" src="" alt="Preview">
+                    </div>
+                    <div class="text-sm text-muted hidden " id="file-info-conv">
+                        <span>Original: <span id="size-orig-conv" class="text-white font-medium">0 KB</span></span>
+                        <span>Result: <span id="size-new-conv" class="text-white font-medium">-</span></span>
+                    </div>
+                    <div class="control-group">
+                        <label>Output Format:</label>
+                        <select id="convert-format" class="glass-input">
+                            <option value="image/png">PNG</option>
+                            <option value="image/jpeg">JPG</option>
+                            <option value="image/webp">WEBP</option>
+                            <option value="image/svg+xml">SVG</option>
+                            <option value="image/bmp">BMP</option>
+                        </select>
+                    </div>
+                    <div class="control-group">
+                        <label>Quality (<span id="quality-val">90</span>%):</label>
+                        <input type="range" id="convert-quality" min="0.1" max="1.0" step="0.1" value="0.9">
+                    </div>
+                    <button class="btn btn-primary w-100" id="btn-convert">Convert & Download</button>
+                </div>
+            </div>
+        </section>
+
+        <section id="view-resizer" class="view">
+            <div class="tool-header">
+                <h2>Smart Resizer</h2>
+                <p>Scale your images perfectly for social media or print.</p>
+            </div>
+            <div class="glass-card tool-container">
+                <div class="drop-zone" id="resizer-drop">
+                    <input type="file" id="resizer-input" accept="image/*" hidden>
+                    <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7"></path></svg>
+                    <p>Drag & Drop an image here or <span class="highlight">Browse</span></p>
+                </div>
+
+                <div class="controls hidden" id="resizer-controls">
+                    <div class="preview-area">
+                        <img id="resizer-preview" src="" alt="Preview"><br>
+                        <small id="original-dimensions"></small>
+                    </div>
+                    <div class="text-sm text-muted " id="file-info-conv1">
+                        <span>Original: <span id="size-orig-conv1" class="text-white font-medium">0 KB</span></span>
+                        <span>Result: <span id="size-new-conv1" class="text-white font-medium">-</span></span>
+                    </div>
+                    <div class="control-group">
+                        <label>Presets:</label>
+                        <select id="resize-preset" class="glass-input">
+                            <option value="custom">Custom</option>
+                            <option value="1080x1080">Instagram Square (1080x1080)</option>
+                            <option value="1200x630">Twitter/FB Post (1200x630)</option>
+                            <option value="1280x720">YouTube Thumbnail (1280x720)</option>
+                            <option value="1920x1080">Full HD (1920x1080)</option>
+                        </select>
+                    </div>
+                    <div class="dimensions-grid">
+                        <div class="control-group">
+                            <label>Width (px):</label>
+                            <input type="number" id="resize-width" class="glass-input" min="1">
+                        </div>
+                        <div class="control-group">
+                            <label>Height (px):</label>
+                            <input type="number" id="resize-height" class="glass-input" min="1">
+                        </div>
+                    </div>
+                    <div class="control-group checkbox-group">
+                        <input type="checkbox" id="keep-aspect" checked>
+                        <label for="keep-aspect">Keep Aspect Ratio</label>
+                    </div>
+                    <button class="btn btn-primary w-100" id="btn-resize">Resize & Download</button>
+                </div>
+            </div>
+        </section>
+
+        <section id="view-edit" class="view">
+            <div class="container">
+            <!-- Controls Sidebar -->
+            <div class="controls-panel">
+            <input type="file" id="file-input" accept="image/*" style="display: none;">
+            
+            <hr style="border: 0; border-top: 1px solid var(--border);">
+
+            <!-- Adjustments Section (Strictly 0 to 100 Range) -->
+            <div class="section-title">Adjustments</div>
+
+            <div class="control-group">
+                <div class="control-label"><span>Brightness</span><span id="val-brightness">50</span></div>
+                <input type="range" class="editor-ctrl" id="brightness" min="0" max="100" value="50" disabled>
+            </div>
+
+            <div class="control-group">
+                <div class="control-label"><span>Contrast</span><span id="val-contrast">50</span></div>
+                <input type="range" class="editor-ctrl" id="contrast" min="0" max="100" value="50" disabled>
+            </div>
+
+            <div class="control-group">
+                <div class="control-label"><span>Saturation</span><span id="val-saturate">50</span></div>
+                <input type="range" class="editor-ctrl" id="saturate" min="0" max="100" value="50" disabled>
+            </div>
+
+            <div class="control-group">
+                <div class="control-label"><span>Blur</span><span id="val-blur">0</span></div>
+                <input type="range" class="editor-ctrl" id="blur" min="0" max="100" value="0" disabled>
+            </div>
+
+            <!-- Filters Section (Strictly 0 to 100 Range) -->
+            <div class="section-title">Filters</div>
+
+            <div class="control-group">
+                <div class="control-label"><span>Grayscale</span><span id="val-grayscale">0</span></div>
+                <input type="range" class="editor-ctrl" id="grayscale" min="0" max="100" value="0" disabled>
+            </div>
+
+            <div class="control-group">
+                <div class="control-label"><span>Sepia</span><span id="val-sepia">0</span></div>
+                <input type="range" class="editor-ctrl"  id="sepia" min="0" max="100" value="0" disabled>
+            </div>
+
+            <div class="control-group">
+                <div class="control-label"><span>Hue Shift</span><span id="val-hue">0</span></div>
+                <input type="range" class="editor-ctrl" id="hue" min="0" max="100" value="0" disabled>
+            </div>
+
+            <div class="control-group">
+                <div class="control-label"><span>Invert</span><span id="val-invert">0</span></div>
+                <input type="range" class="editor-ctrl" id="invert" min="0" max="100" value="0" disabled>
+            </div>
+
+            <!-- Transforms Section -->
+            <div class="section-title">Transform</div>
+            <div class="button-grid">
+                <button class="btn editor-ctrl btn-secondary" id="btn-rotate" disabled>↺ 90°</button>
+                <button class="btn editor-ctrl btn-secondary" id="btn-rotateRight" disabled>↻ 90°</button>
+                <button class="btn editor-ctrl btn-secondary" id="btn-flip-h" disabled>⇄ Flip H</button>
+                <button class="btn editor-ctrl btn-secondary" id="btn-flip-v" disabled>⇅ Flip V</button>
+            </div>
+
+            <hr style="border: 0; border-top: 1px solid var(--border);">
+
+            <!-- Export Actions -->
+            <button class="btn btn-danger editor-ctrl btn-secondary" id="btn-reset" disabled>Reset All</button>
+            <button class="btn btn-primary editor-ctrl" id="btn-download" disabled>↓ Download Image</button>
+            </div>
+
+            <!-- Workspace Area -->
+            <div class="workspace">
+            <div class="previews-wrapper" id="main-view" style="display: none;">
+                
+                <!-- Original Image Preview -->
+                <div class="preview-card">
+                <h3>Original Image</h3>
+                <div class="image-container">
+                    <img id="img-original" alt="Original Preview">
+                </div>
+                </div>
+
+                <!-- Edited Live Canvas Preview -->
+                <div class="preview-card">
+                <h3>Edited Preview</h3>
+                <div class="image-container">
+                    <canvas id="canvas-edited"></canvas>
+                </div>
+                </div>
+
+            </div>
+
+            <!-- Dropzone State (Default) -->
+            <div class="dropzone" id="dropzone" onclick="document.getElementById('file-input').click()">
+                <svg viewBox="0 0 24 24">
+                <path d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+                <div style="text-align: center;">
+                <p style="font-weight: 600; font-size: 1.1rem; margin-bottom: 0.2rem;">Click or Drag & Drop Image Here</p>
+                <p style="color: var(--text-muted); font-size: 0.85rem;">Supports PNG, JPG, WEBP, and GIF</p>
+                </div>
+            </div>
+            </div>
+        </div>
+        </section>
+    </main>
+
+    <div id="toast-container"></div>
+    <script src="/js/script.js"></script>
+</body>
+</html>

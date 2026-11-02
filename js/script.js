@@ -345,7 +345,7 @@ document.addEventListener('DOMContentLoaded', () => {
             updateResizedSize();
             
         } catch (err) {
-            showToast('Failed to load image.', 'error');
+            showToast('Failed to load image.' + err, 'error');
         }
     });
 
@@ -466,28 +466,47 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     // Load Image Handler
+    // fileInput.addEventListener('change', (e) => {
+    //   const file = e.target.files[0];
+    //   if (file) loadImage(file);
+    // });
+
     fileInput.addEventListener('change', (e) => {
-      const file = e.target.files[0];
-      if (file) loadImage(file);
-    });
+    const file = e.target.files[0];
+
+    if (file) {
+        loadEditorImage(file);
+    }
+});
 
     // Drag & Drop Handlers
     window.addEventListener('dragover', (e) => e.preventDefault());
     window.addEventListener('drop', (e) => {
       e.preventDefault();
       if (e.dataTransfer.files.length) {
-        loadImage(e.dataTransfer.files[0]);
+        loadEditorImage(e.dataTransfer.files[0]);
       }
     });
 
-    function loadImage(file) {
-      const reader = new FileReader();
-      reader.onload = (e) => {
+    function loadEditorImage(file) {
+    if (!file || !file.type.startsWith('image/')) {
+        showToast('Please select a valid image.', 'error');
+        return;
+    }
+
+    const reader = new FileReader();
+
+    reader.onload = (e) => {
         rawImage.src = e.target.result;
         imgOriginal.src = e.target.result;
-      };
-      reader.readAsDataURL(file);
-    }
+    };
+
+    reader.onerror = () => {
+        showToast('Unable to read image.', 'error');
+    };
+
+    reader.readAsDataURL(file);
+}
 
     // Step A: Grab all control elements with the 'editor-ctrl' class
     const editorControls = document.querySelectorAll('.editor-ctrl');
@@ -521,6 +540,11 @@ document.addEventListener('DOMContentLoaded', () => {
       render();
     });
 
+    document.getElementById('btn-rotateRight').addEventListener('click', () => {
+      currentRotation = (currentRotation - 90 + 360) % 360;
+      render();
+    });
+    
     document.getElementById('btn-flip-h').addEventListener('click', () => {
       flipH *= -1;
       render();
